@@ -1,0 +1,38 @@
+#!/bin/bash
+
+man_page_names=$(find /usr/share/man /usr/local/share/man -type f -o -type l |
+    grep -v "man3" |
+    sed 's/.*\///' | 
+    grep -v "_" |
+    sed 's/\..*$//' |
+    sed '/.\{10,\}$/d' |
+    grep -v "^$" |
+    grep -v "[A-Z]" |
+    grep -v "[0-9]" |
+    uniq)
+
+export MANWIDTH=$(tput cols)
+get_random_man_page() {
+    man $(echo $man_page_names | tr " " "\n" | sort -R | head -1)
+}
+current_man_page=$(get_random_man_page)
+
+switch_back() {
+    tput rmcup
+    exit 1
+}
+clear
+tput smcup
+
+trap "switch_back" SIGINT
+while true; do
+    current_line=$(echo "$current_man_page" | head -1)
+    echo "$current_line"
+    current_man_page=$(echo "$current_man_page" | tail -n +2)
+    if [ ! -n "$current_man_page" ]; then
+        current_man_page=$(get_random_man_page)
+    fi
+    sleep $(($(echo "$current_line" | wc -w) * 60 / 175))
+done
+
+switch_back
