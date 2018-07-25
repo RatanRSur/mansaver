@@ -1,6 +1,6 @@
 #!/bin/bash
 
-man_page_names=$(find /usr/share/man /usr/local/share/man -type f -o -type l |
+man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l |
     grep -v "man3" |
     sed 's/.*\///' | 
     grep -v "_" |
