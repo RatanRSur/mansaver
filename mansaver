@@ -35,4 +35,4 @@ while true; do
     sleep $(($(echo "$current_line" | wc -w) * 60 / 175))
 done
 
-switch_back
+tput rmcup
