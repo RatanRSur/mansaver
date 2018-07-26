@@ -72,7 +72,3 @@ while true; do
     fi
     sleep $(($(echo "$current_line" | wc -w) * 60 / $wpm))
 done
-
-if [ $use_alternate_screen ]; then
-    tput rmcup
-fi
