@@ -50,7 +50,6 @@ export MANWIDTH=$(tput cols)
 get_random_man_page() {
     man $(echo "$man_page_names" | sort -R | head -1)
 }
-current_man_page=$(get_random_man_page)
 
 switch_back() {
     tput rmcup
@@ -62,13 +61,14 @@ if $use_alternate_screen; then
     trap "switch_back" SIGINT
 fi
 
+current_man_page=""
 while true; do
-    current_line=$(echo "$current_man_page" | head -1)
-    echo "$current_line"
-    current_man_page=$(echo "$current_man_page" | tail -n +2)
     if [ ! -n "$current_man_page" ]; then
         clear
         current_man_page=$(get_random_man_page)
     fi
+    current_line=$(echo "$current_man_page" | head -1)
+    current_man_page=$(echo "$current_man_page" | tail -n +2)
+    echo "$current_line"
     sleep $(($(echo "$current_line" | wc -w) * 60 / $wpm))
 done
