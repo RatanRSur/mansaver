@@ -3,19 +3,19 @@
 args=`getopt x:v:l:sw: $*`
 set -- $args
 
-excluded_sections=""
-default_exclude_patterns=("_" "[A-Z]" "[0-9]")
-user_supplied_exclude_patterns=()
-use_alternate_screen=false
-wpm=350
-max_length=9
+EXCLUDED_SECTIONS=""
+DEFAULT_EXCLUDE_PATTERNS=("_" "[A-Z]" "[0-9]")
+USER_SUPPLIED_EXCLUDE_PATTERNS=()
+USE_ALTERNATE_SCREEN=false
+WPM=350
+MAX_LENGTH=9
 while true; do
     case "$1" in
-        -x ) excluded_sections=$2$excluded_sections; shift 2 ;;
-        -v ) user_supplied_exclude_patterns+=("$2"); shift 2 ;;
-        -l ) max_length="$2"; shift 2 ;;
-        -s ) use_alternate_screen=true; shift ;;
-        -w ) wpm=$2; shift 2 ;;
+        -x ) EXCLUDED_SECTIONS=$2$EXCLUDED_SECTIONS; shift 2 ;;
+        -v ) USER_SUPPLIED_EXCLUDE_PATTERNS+=("$2"); shift 2 ;;
+        -l ) MAX_LENGTH="$2"; shift 2 ;;
+        -s ) USE_ALTERNATE_SCREEN=true; shift ;;
+        -w ) WPM=$2; shift 2 ;;
         -- ) shift ; break ;;
         * ) break ;;
     esac
@@ -23,8 +23,8 @@ done
 
 man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l)
 
-if [ ! $excluded_sections = "" ]; then
-    man_page_names=$(echo "$man_page_names" | egrep -v "man[$excluded_sections]")
+if [ ! $EXCLUDED_SECTIONS = "" ]; then
+    man_page_names=$(echo "$man_page_names" | egrep -v "man[$EXCLUDED_SECTIONS]")
 fi
 
 man_page_names=$(echo "$man_page_names" |
@@ -33,10 +33,10 @@ man_page_names=$(echo "$man_page_names" |
     egrep -v "^$" |
     uniq)
 
-if [ ${#user_supplied_exclude_patterns[@]} -gt 0 ]; then
-    exclude_patterns=( "${user_supplied_exclude_patterns[@]}" )
+if [ ${#USER_SUPPLIED_EXCLUDE_PATTERNS[@]} -gt 0 ]; then
+    exclude_patterns=( "${USER_SUPPLIED_EXCLUDE_PATTERNS[@]}" )
 else
-    exclude_patterns=( "${default_exclude_patterns[@]}" )
+    exclude_patterns=( "${DEFAULT_EXCLUDE_PATTERNS[@]}" )
 fi
 
 for i in "${exclude_patterns[@]}"; do
@@ -44,7 +44,7 @@ for i in "${exclude_patterns[@]}"; do
 done
 
 # Remove man pages longer than "l" characters
-man_page_names=$(echo "$man_page_names" | egrep "^.{,$max_length}$")
+man_page_names=$(echo "$man_page_names" | egrep "^.{,$MAX_LENGTH}$")
 
 export MANWIDTH=$(tput cols)
 get_random_man_page() {
@@ -56,7 +56,7 @@ switch_back() {
     exit 1
 }
 
-if $use_alternate_screen; then
+if $USE_ALTERNATE_SCREEN; then
     tput smcup
     trap "switch_back" SIGINT
 fi
@@ -69,5 +69,5 @@ while true; do
     current_line=$(echo "$current_man_page" | head -1)
     current_man_page=$(echo "$current_man_page" | tail -n +2)
     echo "$current_line"
-    sleep $(($(echo "$current_line" | wc -w) * 60 / $wpm))
+    sleep $(($(echo "$current_line" | wc -w) * 60 / $WPM))
 done
