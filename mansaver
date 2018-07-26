@@ -1,15 +1,50 @@
 #!/bin/bash
 
-man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l |
-    grep -v "man3" |
-    sed 's/.*\///' | 
-    grep -v "_" |
+args=`getopt x:v:l:sw: $*`
+set -- $args
+
+excluded_sections=""
+default_exclude_patterns=("_")
+user_supplied_exclude_patterns=()
+use_alternate_screen=false
+wpm=200
+max_length=9
+while true; do
+    case "$1" in
+        -x ) excluded_sections=$2$excluded_sections; shift 2 ;;
+        -v ) user_supplied_exclude_patterns+=("$2"); shift 2 ;;
+        -l ) max_length="$2"; shift 2 ;;
+        -s ) use_alternate_screen=true; shift ;;
+        -w ) wpm=$2; shift 2 ;;
+        -- ) shift ; break ;;
+        * ) break ;;
+    esac
+done
+
+man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l)
+
+if [ ! $excluded_sections = "" ]; then
+    man_page_names=$(echo "$man_page_names" | egrep -v "man[$excluded_sections]")
+fi
+
+man_page_names=$(echo "$man_page_names" |
     sed 's/\..*$//' |
-    sed '/.\{10,\}$/d' |
-    grep -v "^$" |
-    grep -v "[A-Z]" |
-    grep -v "[0-9]" |
+    sed 's/.*\///' |
+    egrep -v "^$" |
     uniq)
+
+if [ ${#user_supplied_exclude_patterns[@]} -gt 0 ]; then
+    exclude_patterns=( "${user_supplied_exclude_patterns[@]}" )
+else
+    exclude_patterns=( "${default_exclude_patterns[@]}" )
+fi
+
+for i in "${exclude_patterns[@]}"; do
+    man_page_names=$(echo "$man_page_names" | egrep -v "$i")
+done
+
+# Remove man pages longer than "l" characters
+man_page_names=$(echo "$man_page_names" | egrep "^.{,$max_length}$")
 
 export MANWIDTH=$(tput cols)
 get_random_man_page() {
@@ -21,10 +56,12 @@ switch_back() {
     tput rmcup
     exit 1
 }
-clear
-tput smcup
 
-trap "switch_back" SIGINT
+if $use_alternate_screen; then
+    tput smcup
+    trap "switch_back" SIGINT
+fi
+
 while true; do
     current_line=$(echo "$current_man_page" | head -1)
     echo "$current_line"
@@ -33,7 +70,9 @@ while true; do
         clear
         current_man_page=$(get_random_man_page)
     fi
-    sleep $(($(echo "$current_line" | wc -w) * 60 / 200))
+    sleep $(($(echo "$current_line" | wc -w) * 60 / $wpm))
 done
 
-tput rmcup
+if [ $use_alternate_screen ]; then
+    tput rmcup
+fi
