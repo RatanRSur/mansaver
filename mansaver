@@ -4,7 +4,7 @@ args=`getopt x:v:l:sw: $*`
 set -- $args
 
 excluded_sections=""
-default_exclude_patterns=("_")
+default_exclude_patterns=("_" "[A-Z]" "[0-9]")
 user_supplied_exclude_patterns=()
 use_alternate_screen=false
 wpm=200
