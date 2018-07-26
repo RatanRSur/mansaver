@@ -7,7 +7,7 @@ excluded_sections=""
 default_exclude_patterns=("_" "[A-Z]" "[0-9]")
 user_supplied_exclude_patterns=()
 use_alternate_screen=false
-wpm=200
+wpm=350
 max_length=9
 while true; do
     case "$1" in
