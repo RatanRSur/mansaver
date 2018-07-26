@@ -13,7 +13,7 @@ man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l |
 
 export MANWIDTH=$(tput cols)
 get_random_man_page() {
-    man $(echo $man_page_names | tr " " "\n" | sort -R | head -1)
+    man $(echo "$man_page_names" | sort -R | head -1)
 }
 current_man_page=$(get_random_man_page)
 
