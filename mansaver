@@ -30,6 +30,7 @@ while true; do
     echo "$current_line"
     current_man_page=$(echo "$current_man_page" | tail -n +2)
     if [ ! -n "$current_man_page" ]; then
+        clear
         current_man_page=$(get_random_man_page)
     fi
     sleep $(($(echo "$current_line" | wc -w) * 60 / 175))
