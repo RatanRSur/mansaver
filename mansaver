@@ -33,7 +33,7 @@ while true; do
         clear
         current_man_page=$(get_random_man_page)
     fi
-    sleep $(($(echo "$current_line" | wc -w) * 60 / 175))
+    sleep $(($(echo "$current_line" | wc -w) * 60 / 200))
 done
 
 tput rmcup
