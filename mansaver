@@ -61,7 +61,6 @@ if $use_alternate_screen; then
     trap "switch_back" SIGINT
 fi
 
-current_man_page=""
 while true; do
     if [ ! -n "$current_man_page" ]; then
         clear
