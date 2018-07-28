@@ -23,7 +23,7 @@ done
 
 man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l)
 
-if [ ! $EXCLUDED_SECTIONS = "" ]; then
+if [ $EXCLUDED_SECTIONS != "" ]; then
     man_page_names=$(echo "$man_page_names" | egrep -v "man[$EXCLUDED_SECTIONS]")
 fi
 
