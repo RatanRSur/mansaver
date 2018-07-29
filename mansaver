@@ -48,8 +48,8 @@ if [ $MAX_LENGTH -ne -1 ]; then
     man_page_names=$(echo "$man_page_names" | egrep "^.{,$MAX_LENGTH}$")
 fi
 
-export MANWIDTH=$(tput cols)
 get_random_man_page() {
+    export MANWIDTH=$(tput cols)
     man $(echo "$man_page_names" | sort -R | head -1)
 }
 
