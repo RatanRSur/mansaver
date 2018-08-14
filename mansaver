@@ -71,7 +71,7 @@ fi
 #echo $man_page_names
 while true; do
     export MANWIDTH=$(tput cols)
-    if [ ! -n "$current_man_page" ]; then
+    if [ -z "$current_man_page" ]; then
         clear
         current_man_page_name=$(get_random_man_page_name)
         if [ "$current_man_page_name" = "lolcat" ]; then
