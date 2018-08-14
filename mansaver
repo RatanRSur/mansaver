@@ -54,8 +54,8 @@ if [ $MAX_LENGTH -ne -1 ]; then
     man_page_names=$(echo "$man_page_names" | egrep "^.{,$MAX_LENGTH}$")
 fi
 
-get_random_man_page() {
-    man $(echo "$man_page_names" | sort -R | head -1)
+get_random_man_page_name() {
+    echo "$man_page_names" | sort -R | head -1
 }
 
 switch_back() {
@@ -73,10 +73,18 @@ while true; do
     export MANWIDTH=$(tput cols)
     if [ ! -n "$current_man_page" ]; then
         clear
-        current_man_page=$(get_random_man_page)
+        current_man_page_name=$(get_random_man_page_name)
+        if [ "$current_man_page_name" = "lolcat" ]; then
+            man lolcat | lolcat -a
+            current_man_page_name=$(get_random_man_page_name)
+            continue
+        else
+            current_man_page=$(man $current_man_page_name)
+        fi
     fi
     current_line=$(echo "$current_man_page" | head -1)
     current_man_page=$(echo "$current_man_page" | tail -n +2)
     echo "$current_line"
     sleep $(($(echo "$current_line" | wc -w) * 60 / $WPM))
 done
+
