@@ -68,6 +68,7 @@ if $USE_ALTERNATE_SCREEN; then
     trap "switch_back" SIGINT
 fi
 
+#echo $man_page_names
 while true; do
     export MANWIDTH=$(tput cols)
     if [ ! -n "$current_man_page" ]; then
