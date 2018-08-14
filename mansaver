@@ -3,15 +3,16 @@
 args=`getopt x:v:l:sw: $*`
 set -- $args
 
-EXCLUDED_SECTIONS=""
-DEFAULT_EXCLUDE_PATTERNS=("_" "[A-Z]" "[0-9]" ":")
+DEFAULT_EXCLUDED_SECTIONS="3"
+USER_SUPPLIED_EXCLUDED_SECTIONS=""
+DEFAULT_EXCLUDE_PATTERNS=("_" "[A-Z]" "[0-9]" ":" "perl")
 USER_SUPPLIED_EXCLUDE_PATTERNS=()
 USE_ALTERNATE_SCREEN=false
 WPM=350
 MAX_LENGTH=10
 while true; do
     case "$1" in
-        -x ) EXCLUDED_SECTIONS=$2$EXCLUDED_SECTIONS; shift 2 ;;
+        -x ) USER_SUPPLIED_EXCLUDED_SECTIONS=$2$USER_SUPPLIED_EXCLUDED_SECTIONS; shift 2 ;;
         -v ) USER_SUPPLIED_EXCLUDE_PATTERNS+=("$2"); shift 2 ;;
         -l ) MAX_LENGTH="$2"; shift 2 ;;
         -s ) USE_ALTERNATE_SCREEN=true; shift ;;
@@ -23,9 +24,13 @@ done
 
 man_page_names=$(find $(manpath | tr ":" "\n") -type f -o -type l)
 
-if [ "$EXCLUDED_SECTIONS" != "" ]; then
-    man_page_names=$(echo "$man_page_names" | egrep -v "man[$EXCLUDED_SECTIONS]")
+if [ "$USER_SUPPLIED_EXCLUDED_SECTIONS" != "" ]; then
+    EXCLUDED_SECTIONS=$USER_SUPPLIED_EXCLUDED_SECTIONS
+else
+    EXCLUDED_SECTIONS=$DEFAULT_EXCLUDED_SECTIONS
 fi
+
+man_page_names=$(echo "$man_page_names" | egrep -v "man[$EXCLUDED_SECTIONS]")
 
 man_page_names=$(echo "$man_page_names" |
     sed 's/\..*$//' |
