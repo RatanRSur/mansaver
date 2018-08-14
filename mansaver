@@ -36,6 +36,7 @@ man_page_names=$(echo "$man_page_names" |
     sed 's/\..*$//' |
     sed 's/.*\///' |
     egrep -v "^$" |
+    sort |
     uniq)
 
 if [ ${#USER_SUPPLIED_EXCLUDE_PATTERNS[@]} -gt 0 ]; then
