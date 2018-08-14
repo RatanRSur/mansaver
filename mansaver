@@ -55,7 +55,6 @@ if [ $MAX_LENGTH -ne -1 ]; then
 fi
 
 get_random_man_page() {
-    export MANWIDTH=$(tput cols)
     man $(echo "$man_page_names" | sort -R | head -1)
 }
 
@@ -70,6 +69,7 @@ if $USE_ALTERNATE_SCREEN; then
 fi
 
 while true; do
+    export MANWIDTH=$(tput cols)
     if [ ! -n "$current_man_page" ]; then
         clear
         current_man_page=$(get_random_man_page)
