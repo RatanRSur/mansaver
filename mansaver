@@ -55,7 +55,7 @@ if [ $MAX_LENGTH -ne -1 ]; then
 fi
 
 get_random_man_page_name() {
-    echo "$man_page_names" | sort -R | head -1
+    echo "$man_page_names" | shuf | head -1
 }
 
 switch_back() {
