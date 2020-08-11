@@ -5,16 +5,14 @@ set -- $args
 
 DEFAULT_EXCLUDED_SECTIONS="3"
 USER_SUPPLIED_EXCLUDED_SECTIONS=""
-DEFAULT_EXCLUDE_PATTERNS=("_" "[A-Z]" "[0-9]" ":" "perl")
+DEFAULT_EXCLUDE_PATTERNS=("_" "[A-Z]" "[0-9]" ":" "perl" "^.{10,}$")
 USER_SUPPLIED_EXCLUDE_PATTERNS=()
 USE_ALTERNATE_SCREEN=false
 WPM=350
-MAX_NAME_LENGTH=10
 while true; do
     case "$1" in
         -x ) USER_SUPPLIED_EXCLUDED_SECTIONS=$2$USER_SUPPLIED_EXCLUDED_SECTIONS; shift 2 ;;
         -v ) USER_SUPPLIED_EXCLUDE_PATTERNS+=("$2"); shift 2 ;;
-        -l ) MAX_NAME_LENGTH="$2"; shift 2 ;;
         -s ) USE_ALTERNATE_SCREEN=true; shift ;;
         -w ) WPM=$2; shift 2 ;;
         -- ) shift ; break ;;
@@ -48,11 +46,6 @@ fi
 for i in "${exclude_patterns[@]}"; do
     man_page_names=$(echo "$man_page_names" | egrep -v "$i")
 done
-
-# Remove man pages with names longer than "l" characters
-if [ $MAX_NAME_LENGTH -ne -1 ]; then
-    man_page_names=$(echo "$man_page_names" | egrep "^.{,$MAX_NAME_LENGTH}$")
-fi
 
 get_random_man_page_name() {
     echo "$man_page_names" | shuf | head -1
