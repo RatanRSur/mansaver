@@ -1,0 +1,25 @@
+.TH MANSAVER 1
+.SH NAME
+mansaver \- idley learn about your system
+.SH SYNOPSIS
+.B mansaver
+[\fB\-x\fR \fIexcluded_sections\fR]
+[\fB\-v\fR \fIexclude_pattern\fR]
+[\fB\-w\fR \fIwords_per_minute\fR]
+[\fB\-s\fR]
+.SH DESCRIPTION
+.B mansaver takes all random man pages you have installed on your system and scrolls through them slowly. Set it up on your terminal when you're doing other things and you'll be surprised at what commands you have!
+.SH OPTIONS
+.TP
+.BR \-x=\fIexcluded_sections\fR
+Ignore the given man sections. The argument is a string of digits. For example, to exclude sections 2, 5, and 7, you would use "257". Default: "3"
+.TP
+.BR \-v=\fIexclude_pattern\fR
+Ignore man pages that match the pattern. PATTERNS is specified as a TODO
+.TP
+.BR \-w=\fIwords_per_minute\fR
+Approximately how many words per minute to print. Default 350.
+.TP
+.BR \-s
+Use alternate terminal screen when starting mansaver. Allows it to function a bit more like a screensaver becuase it reloads the screen state from when it was started.
+.TP
